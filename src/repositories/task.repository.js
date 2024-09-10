@@ -1,15 +1,17 @@
 const Task = require("../db/schemas/taskSchema");
 
-const findById = async (query) => {
+const findTaskById = async (query) => {
   return await Task.findById(query);
 };
-
-const create = async (data) => {
+const insertManyTasks = async (data) => {
+  return await Task.insertMany(data);
+}
+const createTask = async (data) => {
   await Task.create(data);
 };
 
-const update = async (query, data, options) => {
+const updateTask = async (query, data, options) => {
   await Task.findByIdAndUpdate(query, data, options);
 };
 
-module.exports = { findById, create, update };
+module.exports = { findTaskById, createTask, updateTask,insertManyTasks };

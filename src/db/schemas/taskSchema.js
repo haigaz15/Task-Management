@@ -5,7 +5,7 @@ const TaskSchema = new mongoose.Schema({
   descriptino: { type: String, required: true },
   dueData: { type: Date, required: true },
   priority: { type: Number, required: true },
-  assignedMember: { type: Number, required: true },
+  assignedMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }],
 });
 
 
