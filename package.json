@@ -4,12 +4,14 @@
   "description": "task management system with node",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./src/app"
   },
   "author": "Haigaz Soghmonian",
   "license": "ISC",
   "dependencies": {
-    "dotconfig": "^0.0.1-security",
-    "express": "^4.20.0"
+    "dotenv": "^16.4.5",
+    "express": "^4.20.0",
+    "mongoose": "^8.6.1",
+    "nodemon": "^3.1.4"
   }
 }
