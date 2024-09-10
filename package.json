@@ -1,0 +1,15 @@
+{
+  "name": "task-management",
+  "version": "1.0.0",
+  "description": "task management system with node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Haigaz Soghmonian",
+  "license": "ISC",
+  "dependencies": {
+    "dotconfig": "^0.0.1-security",
+    "express": "^4.20.0"
+  }
+}
