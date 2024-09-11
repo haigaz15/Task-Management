@@ -5,10 +5,16 @@ const TaskSchema = new mongoose.Schema({
   descriptino: { type: String, required: true },
   dueData: { type: Date, required: true },
   priority: { type: Number, required: true },
-  assignedMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }],
+  status: {
+    type: String,
+    enum: ["in-complete", "in-progress", "completed"],
+    default: "in-complete",
+  },
+  assignedMembers: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  ],
 });
 
-
-const Task = mongoose.model("task",TaskSchema);
+const Task = mongoose.model("task", TaskSchema);
 
 module.exports = Task;

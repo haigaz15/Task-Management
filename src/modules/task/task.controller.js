@@ -9,7 +9,14 @@ const createTasks = async (req, res, next) => {
   }
 };
 
-const getTaskDetails = (req, res, next) => {};
+const getTaskDetails = async (req, res, next) => {
+  try {
+    const task = await TaskService.getTaskDetails(req, res);
+    res.status(200).json(task);
+  } catch (err) {
+    next(err);
+  }
+};
 
 const updateTaskStatus = (req, res, next) => {};
 

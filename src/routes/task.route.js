@@ -1,14 +1,17 @@
-const express = require("express")
-const TaskController = require("../modules/task/task.controller")
+const express = require("express");
+const TaskController = require("../modules/task/task.controller");
 const ReportController = require("../modules/report/report.controller");
-const route = express.Router()
+const route = express.Router();
 
-route.post("/tasks",TaskController.createTasks)
+route.post("/tasks", TaskController.createTasks);
 
-route.get("/task/:id",TaskController.getTaskDetails)
+route.get("/task/:taskId", TaskController.getTaskDetails);
 
-route.put("task/:id",TaskController.updateTaskStatus)
+route.put("task/:taskId", TaskController.updateTaskStatus);
 
-route.get("task-completion/report/:id",ReportController.taskCompletionReport)
+route.get(
+  "task-completion/report/:taskId",
+  ReportController.taskCompletionReport
+);
 
-module.exports = route
+module.exports = route;

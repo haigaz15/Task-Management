@@ -8,4 +8,4 @@ const updateManyUsers = async (query, data) => {
   return User.updateMany(query, data);
 };
 
-module.exports = { insertManyUsers,updateManyUsers };
+module.exports = { insertManyUsers, updateManyUsers };

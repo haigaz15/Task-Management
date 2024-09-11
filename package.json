@@ -4,7 +4,8 @@
   "description": "task management system with node",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/app"
+    "start": "nodemon ./src/app",
+    "format":"prettier --write ./src"
   },
   "author": "Haigaz Soghmonian",
   "license": "ISC",
