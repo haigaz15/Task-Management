@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const TaskSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  descriptino: { type: String, required: true },
+  title: { type: String, required: true, unique: true },
+  description: { type: String, required: true },
   dueData: { type: Date, required: true },
   priority: { type: Number, required: true },
   status: {
@@ -10,9 +10,7 @@ const TaskSchema = new mongoose.Schema({
     enum: ["in-complete", "in-progress", "completed"],
     default: "in-complete",
   },
-  assignedMembers: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  ],
+  progressLevel: { type: Number, default: 0 },
 });
 
 const Task = mongoose.model("task", TaskSchema);
