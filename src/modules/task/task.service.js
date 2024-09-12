@@ -7,21 +7,38 @@ const createTask = async (req, res) => {
   try {
     const taskData = req.body;
     const assignedMembers = taskData.assignedMembers;
+    let task = await TaskRepository.find({ title: taskData.title });
+    if (task || task.length !== 0)
+      throw new APIError("Task already exist!", 400);
+    if (!assignedMembers || assignedMembers.length === 0) {
+      throw new APIError("Please attach the members that will contribute", 400);
+    }
     const usernames = assignedMembers.map((a) => a.username);
     let users = await UserRepository.find({ username: { $in: usernames } });
-    if (!users || !users.length === 0)
-      throw new APIError(
-        `Some Users with ids ${users.map((user) => user._id)} already exist!`,
-        400
-      );
-    users = await UserRepository.insertManyUsers(assignedMembers);
+    let newUsers = [];
+    if (!users || users.length === 0) {
+      await UserRepository.insertManyUsers(assignedMembers);
+    } else {
+      let setOfUsernames = new Set(usernames);
+      users.forEach((user) => {
+        if (setOfUsernames.has(user.username))
+          setOfUsernames.delete(user.username);
+      });
+      newUsers = [...setOfUsernames];
+      let newAssignedMembers = [];
+      for (const member of assignedMembers) {
+        for (const newUser of newUsers) {
+          if (member.username === newUser) newAssignedMembers.push(member);
+        }
+      }
+      await UserRepository.insertManyUsers(newAssignedMembers);
+    }
+    users = await UserRepository.find({ username: { $in: usernames } });
     const userMap = users.reduce((map, user) => {
       map[user.username] = user._id;
       return map;
     }, {});
-    let task = TaskRepository.find({ title: taskData.title });
-    if (!task || !task.length === 0)
-      throw new APIError("Task already exist!", 400);
+
     task = await TaskRepository.createTask({
       title: taskData.title,
       description: taskData.description,
@@ -43,23 +60,44 @@ const createTask = async (req, res) => {
 const createTasks = async (req, res) => {
   try {
     const taskDatas = req.body;
+    let task = await TaskRepository.find({ title: taskDatas.title });
+    if (task || !task.length !== 0)
+      throw new APIError("Task already exist!", 400);
+
     const assignedMembers = [
       ...new Set(taskDatas.flatMap((taskData) => taskData.assignedMembers)),
     ];
+    if (!assignedMembers || assignedMembers.length === 0) {
+      throw new APIError("Please attach the members that will contribute", 400);
+    }
     const usernames = assignedMembers.map((a) => a.username);
     let users = await UserRepository.find({ username: { $in: usernames } });
-    if (!users || users.length === 0)
-      throw new APIError(
-        `Some Users with ids ${users.map((user) => user._id)} already exist!`,
-        400
-      );
-    users = await UserRepository.insertManyUsers(assignedMembers);
+    let newUsers = [];
+    if (!users || users.length === 0) {
+      await UserRepository.insertManyUsers(assignedMembers);
+    } else {
+      let setOfUsernames = new Set(usernames);
+      users.forEach((user) => {
+        if (setOfUsernames.has(user.username))
+          setOfUsernames.delete(user.username);
+      });
+      newUsers = [...setOfUsernames];
+      let newAssignedMembers = [];
+      for (const member of assignedMembers) {
+        for (const newUser of newUsers) {
+          if (member.username === newUser) newAssignedMembers.push(member);
+        }
+      }
+      await UserRepository.insertManyUsers(newAssignedMembers);
+    }
+
+    users = await UserRepository.find({ username: { $in: usernames } });
 
     const userMap = users.reduce((map, user) => {
       map[user.username] = user._id;
       return map;
     }, {});
-    const tasks = taskDatas.map((taskData) => {
+    tasks = taskDatas.map((taskData) => {
       return {
         title: taskData.title,
         description: taskData.description,

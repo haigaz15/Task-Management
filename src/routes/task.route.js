@@ -7,10 +7,10 @@ route.post("/task", TaskController.createTask);
 
 route.post("/tasks", TaskController.createTasks);
 
+route.get("/task/report", ReportController.taskCompletionReport);
+
 route.get("/task/:taskId", TaskController.getTaskDetails);
 
 route.put("/task/:taskId", TaskController.updateTaskStatus);
-
-route.get("task-completion/report", ReportController.taskCompletionReport);
 
 module.exports = route;
