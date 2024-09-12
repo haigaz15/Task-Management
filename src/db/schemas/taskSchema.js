@@ -10,7 +10,10 @@ const TaskSchema = new mongoose.Schema({
     enum: ["in-complete", "in-progress", "completed"],
     default: "in-complete",
   },
-  progressLevel: { type: Number, default: 0 },
+  progressLevel: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Task = mongoose.model("task", TaskSchema);

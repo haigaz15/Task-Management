@@ -9,7 +9,7 @@ route.post("/tasks", TaskController.createTasks);
 
 route.get("/task/:taskId", TaskController.getTaskDetails);
 
-route.put("task/:taskId", TaskController.updateTaskStatus);
+route.put("/task/:taskId", TaskController.updateTaskStatus);
 
 route.get(
   "task-completion/report/:taskId",

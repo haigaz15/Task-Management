@@ -100,8 +100,39 @@ const getTaskDetails = async (req, res) => {
 };
 
 const updateTaskStatus = async (req, res) => {
-  const { taskId } = req.params;
-  await TaskRepository.updateTask(taskId, { status: "in-progress" });
+  try {
+    const { taskId } = req.params;
+    const updateData = req.body;
+    const contributions = updateData.reduce((sum, u) => {
+      sum += u.userContribution;
+      return sum;
+    }, 0);
+    const task = await TaskRepository.findTaskById(taskId);
+    if (!task) throw new APIError(`Task with id ${taskId} could not be found`);
+    const userTasks = await UserTaskRepository.find({ taskId: taskId });
+    if (!userTasks || userTasks === 0)
+      throw new APIError("User task can not be found", 404);
+
+    const updatedUserTasks = await Promise.all(
+      updateData.map(async (user) => {
+        return UserTaskRepository.updateUserTask(
+          { userId: user.userId },
+          {
+            $inc: {
+              userContribution: user.userContribution,
+            },
+          }
+        );
+      })
+    );
+
+    return await TaskRepository.updateTask(taskId, {
+      status: "in-progress",
+      $inc: { progressLevel: contributions },
+    });
+  } catch (err) {
+    throw err;
+  }
 };
 
 module.exports = { createTasks, getTaskDetails, updateTaskStatus, createTask };

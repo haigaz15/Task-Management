@@ -34,9 +34,7 @@ const getTaskDetails = async (req, res, next) => {
 const updateTaskStatus = async (req, res, next) => {
   try {
     const updatedTask = await TaskService.updateTaskStatus(req, res);
-    res
-      .status(204)
-      .json({ message: "Task updated sucessfully!", updatedTask: updatedTask });
+    res.status(200).json({ message: "Task updated sucessfully!", updatedTask });
   } catch (err) {
     next(err);
   }

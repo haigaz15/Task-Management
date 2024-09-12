@@ -14,7 +14,7 @@ const createTask = async (data) => {
 };
 
 const updateTask = async (query, data, options) => {
-  await Task.findByIdAndUpdate(query, data, options);
+  return await Task.findByIdAndUpdate(query, data, options);
 };
 
 module.exports = {
