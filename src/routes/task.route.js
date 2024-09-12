@@ -11,9 +11,6 @@ route.get("/task/:taskId", TaskController.getTaskDetails);
 
 route.put("/task/:taskId", TaskController.updateTaskStatus);
 
-route.get(
-  "task-completion/report/:taskId",
-  ReportController.taskCompletionReport
-);
+route.get("task-completion/report", ReportController.taskCompletionReport);
 
 module.exports = route;

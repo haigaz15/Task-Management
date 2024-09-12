@@ -103,17 +103,36 @@ const updateTaskStatus = async (req, res) => {
   try {
     const { taskId } = req.params;
     const updateData = req.body;
-    const contributions = updateData.reduce((sum, u) => {
+    let contributions = updateData.reduce((sum, u) => {
       sum += u.userContribution;
       return sum;
     }, 0);
     const task = await TaskRepository.findTaskById(taskId);
     if (!task) throw new APIError(`Task with id ${taskId} could not be found`);
+    let status = "in-progress";
+    if (task.progressLevel === 100)
+      throw new APIError(
+        `Task is completed! no more contributions are need`,
+        400
+      );
+    if (contributions + task.progressLevel > 100)
+      throw new APIError(
+        `Users contribution level exceed 100 ${updateData.map(
+          (u) =>
+            `user with id: ${u.userId} and contribution: ${u.userContribution}, `
+        )}. 
+         Please adjust your contributions to match exacly 100`,
+        400
+      );
+    if (contributions + task.progressLevel === 100) {
+      status = "completed";
+    }
+
     const userTasks = await UserTaskRepository.find({ taskId: taskId });
     if (!userTasks || userTasks === 0)
       throw new APIError("User task can not be found", 404);
 
-    const updatedUserTasks = await Promise.all(
+    await Promise.all(
       updateData.map(async (user) => {
         return UserTaskRepository.updateUserTask(
           { userId: user.userId },
@@ -125,11 +144,12 @@ const updateTaskStatus = async (req, res) => {
         );
       })
     );
-
-    return await TaskRepository.updateTask(taskId, {
-      status: "in-progress",
+    const updateParams = {
+      status: status,
       $inc: { progressLevel: contributions },
-    });
+      completionDate: status === "completed" ? new Date() : null,
+    };
+    return await TaskRepository.updateTask(taskId, updateParams, { new: true });
   } catch (err) {
     throw err;
   }

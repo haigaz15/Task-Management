@@ -5,6 +5,7 @@ const TaskSchema = new mongoose.Schema({
   description: { type: String, required: true },
   dueData: { type: Date, required: true },
   priority: { type: Number, required: true },
+  completionDate: { type: Date },
   status: {
     type: String,
     enum: ["in-complete", "in-progress", "completed"],
