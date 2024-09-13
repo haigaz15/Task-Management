@@ -9,6 +9,11 @@ route.post("/tasks", TaskController.createTasks);
 
 route.get("/task/report", ReportController.taskCompletionReport);
 
+route.get(
+  "/task/report/timeandcount",
+  ReportController.taskCompletionAvgTimeAndCount
+);
+
 route.get("/task/:taskId", TaskController.getTaskDetails);
 
 route.put("/task/:taskId", TaskController.updateTaskStatus);

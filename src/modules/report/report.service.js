@@ -92,4 +92,27 @@ const taskCompletionReport = async (req, res) => {
   }
 };
 
-module.exports = { taskCompletionReport };
+const taskCompletionAvgTimeAndCount = async (req, res) => {
+  try {
+    const tasks = await TaskRepository.find({ status: "completed" });
+    if (!tasks || tasks.length === 0)
+      throw new APIError("No tasks completed yet!", 400);
+    const completedTasksCount = tasks.length;
+    const timeTookToComplete = tasks.map(
+      (task) => (task.completionDate - task.createdAt) / (1000 * 60 * 60)
+    );
+    let avgTime = 0;
+    timeTookToComplete.forEach((time) => {
+      avgTime += time;
+    });
+    avgTime = avgTime / timeTookToComplete.length;
+    return {
+      completedTasksCount: completedTasksCount,
+      averageTimeTookToComplete: avgTime,
+    };
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = { taskCompletionReport, taskCompletionAvgTimeAndCount };
