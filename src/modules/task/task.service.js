@@ -8,15 +8,14 @@ const createTask = async (req, res) => {
     const taskData = req.body;
     const assignedMembers = taskData.assignedMembers;
     let task = await TaskRepository.find({ title: taskData.title });
-    if (task || task.length !== 0)
-      throw new APIError("Task already exist!", 400);
+    if (task.length !== 0) throw new APIError("Task already exist!", 400);
     if (!assignedMembers || assignedMembers.length === 0) {
       throw new APIError("Please attach the members that will contribute", 400);
     }
     const usernames = assignedMembers.map((a) => a.username);
     let users = await UserRepository.find({ username: { $in: usernames } });
     let newUsers = [];
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       await UserRepository.insertManyUsers(assignedMembers);
     } else {
       let setOfUsernames = new Set(usernames);
@@ -61,8 +60,7 @@ const createTasks = async (req, res) => {
   try {
     const taskDatas = req.body;
     let task = await TaskRepository.find({ title: taskDatas.title });
-    if (task || !task.length !== 0)
-      throw new APIError("Task already exist!", 400);
+    if (task.length !== 0) throw new APIError("Task already exist!", 400);
 
     const assignedMembers = [
       ...new Set(taskDatas.flatMap((taskData) => taskData.assignedMembers)),
@@ -73,7 +71,7 @@ const createTasks = async (req, res) => {
     const usernames = assignedMembers.map((a) => a.username);
     let users = await UserRepository.find({ username: { $in: usernames } });
     let newUsers = [];
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       await UserRepository.insertManyUsers(assignedMembers);
     } else {
       let setOfUsernames = new Set(usernames);
@@ -173,7 +171,7 @@ const updateTaskStatus = async (req, res) => {
     await Promise.all(
       updateData.map(async (user) => {
         return UserTaskRepository.updateUserTask(
-          { userId: user.userId },
+          { userId: user.userId, taskId: taskId },
           {
             $inc: {
               userContribution: user.userContribution,
